@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Will You Be My Valentine? 💘</title>
+<style>
+body {
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    background: pink;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+#container { text-align: center; position: relative; }
+h1 { margin-bottom: 30px; }
+#buttons { position: relative; width: 350px; height: 120px; }
+button {
+    padding: 15px 25px;
+    font-size: 20px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    position: absolute;
+    transition: all 0.25s ease;
+}
+#yes { background: #4CAF50; color: white; left: 0; z-index: 3; }
+#no { background: #f44336; color: white; right: 0; z-index: 2; transform: scale(0.8); }
+#confetti { position: fixed; inset: 0; display: none; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="container">
+    <h1>Will you be my Valentine? 💘</h1>
+    <div id="buttons">
+        <button id="yes">YES 💚</button>
+        <button id="no">NO 💔</button>
+    </div>
+</div>
+<canvas id="confetti"></canvas>
+
+<script>
+const yesBtn = document.getElementById("yes");
+const noBtn = document.getElementById("no");
+
+let clickCount = 0;
+const texts = [
+    "Are you sure? 😳",
+    "Really sure? 🥺",
+    "Really really sure? 🥺",
+    "Really really really sure? 🥺"
+];
+
+yesBtn.addEventListener("click", () => {
+    document.body.innerHTML = `
+        <h1 style="
+            position:fixed;
+            inset:0;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            text-align:center;
+            background:pink;
+            font-size:40px;
+        ">
+        I knew you would make the right choice 💖🎉<br>
+        Happy Valentine!
+        </h1>
+        <canvas id="confetti"></canvas>
+    `;
+
+    const canvas = document.getElementById("confetti");
+    canvas.style.display = "block";
+    const ctx = canvas.getContext("2d");
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+
+    let pieces = [];
+    for (let i = 0; i < 250; i++) {
+        pieces.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            r: Math.random() * 6 + 2,
+            s: Math.random() * 4 + 2,
+            c: `hsl(${Math.random()*360},100%,50%)`
+        });
+    }
+
+    function animate() {
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        pieces.forEach(p => {
+            ctx.beginPath();
+            ctx.fillStyle = p.c;
+            ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+            ctx.fill();
+            p.y += p.s;
+            if(p.y>canvas.height){p.y=0;p.x=Math.random()*canvas.width;}
+        });
+        requestAnimationFrame(animate);
+    }
+    animate();
+});
+
+noBtn.addEventListener("click", () => {
+    // Cambia testo YES in base ai click
+    if(clickCount < texts.length) {
+        yesBtn.textContent = texts[clickCount];
+    } else {
+        // Al click successivo, YES diventa gigante e NO sparisce
+        yesBtn.style.position = "fixed";
+        yesBtn.style.inset = "0";
+        yesBtn.style.borderRadius = "0";
+        yesBtn.style.fontSize = "50px";
+        yesBtn.textContent = "Really really really really sure? 🥺💖";
+        noBtn.style.display = "none";
+    }
+    clickCount++;
+});
+</script>
+</body>
+</html>
